@@ -15,21 +15,12 @@ dotenvSafe.config({
   example: '.env.example',
 });
 
+// swagger-jsdoc와 swagger-ui-express 패키지를 import
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Sample API with Swagger',
-      version: '1.0.0',
-    },
-  },
-  apis: ['./routes/*.mjs'], // API 라우트 파일 경로
-};
-
-const specs = swaggerJsdoc(options);
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 logger.info(process.env.JWT_SECRET);
 logger.info(process.env.NODE_ENV);
@@ -66,7 +57,24 @@ async function startServer() {
     // Swagger UI는 /api-docs 경로에 대한 GET 요청을 처리한다. 이 요청에 대한 응답으로 Swagger UI를 제공한다
     // Swagger UI는 Swagger 스펙을 사용하여 API 문서를 렌더링한다
     // Swagger 스펙은 OpenAPI 스펙을 사용하여 작성된 JSON 또는 YAML 파일이다
-    app.use('/api-docs/v1', swaggerUi.serve, swaggerUi.setup(specs));
+    {
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = path.dirname(__filename);
+
+      const options = {
+        definition: {
+          openapi: '3.0.0',
+          info: {
+            title: 'Sample API with Swagger',
+            version: '1.0.0',
+          },
+        },
+        apis: [path.join(__dirname, './routes/v1/*.mjs')], // API 스펙이 작성된 파일의 경로를 지정
+      };
+
+      const specs = swaggerJsdoc(options);
+      app.use('/api-docs/v1', swaggerUi.serve, swaggerUi.setup(specs));
+    }
 
     // 오류 처리 미들웨어를 추가
     app.use((err, req, res, next) => {
