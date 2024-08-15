@@ -60,6 +60,8 @@ async function startServer() {
     {
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = path.dirname(__filename);
+      logger.info('현재 디렉토리:' + __dirname);
+      logger.info('API 파일 경로:' + path.join(__dirname, './routes/v1/*.mjs'));
 
       const options = {
         definition: {
@@ -73,6 +75,8 @@ async function startServer() {
       };
 
       const specs = swaggerJsdoc(options);
+      console.log('Swagger specs:', JSON.stringify(specs, null, 2));
+
       app.use('/api-docs/v1', swaggerUi.serve, swaggerUi.setup(specs));
     }
 
