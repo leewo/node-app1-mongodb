@@ -1,6 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import routes from './routes/routes.mjs';
+import v1Routes from './routes/v1/index.mjs';
 import connectToMongoDB from './connect-mongodb.mjs';
 import cors from 'cors';
 import { errorHandler } from './middleware/errorHandler.mjs';
@@ -37,7 +37,7 @@ async function startServer() {
     // 오류 처리 미들웨어를 추가
     app.use(errorHandler);
 
-    app.use('/api', routes);
+    app.use('/api/v1', v1Routes);
 
     // 오류 처리 미들웨어를 추가
     app.use((err, req, res, next) => {
