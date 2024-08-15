@@ -1,5 +1,6 @@
 import User from '../models/user.mjs';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 // const router = require('express').Router;
 import { Router } from 'express'; // ES 모듈 문법을 사용하여 express 패키지에서 Router를 직접 import
@@ -36,6 +37,13 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
+    const token = jwt.sign( // jwt.sign() 메서드를 사용하여 토큰을 생성
+      { _id: user._id },    // 첫 번째 인수: 토큰에 포함될 데이터
+      'secret',             // 두 번째 인수: 토큰을 서명하기 위한 비밀 키
+      { expiresIn: '1h' }   // 세 번째 인수: 토큰의 만료 시간. '1h'은 토큰이 1시간 후에 만료되도록 설정
+    );
+    res.header('auth-token', token);  // 헤더에 토큰을 추가
+    res.header('access-control-expose-headers', 'auth-token'); // 클라이언트가 헤더에 접근할 수 있도록 헤더를 노출
     res.status(200).json({ message: 'User logged in successfully' });
   } catch (error) {
     res.status(400).json({ message: 'Error logging in', error: error.message });
