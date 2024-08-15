@@ -4,23 +4,24 @@ import routes from './routes/routes.mjs';
 import connectToMongoDB from './connect-mongodb.mjs';
 import cors from 'cors';
 import { errorHandler } from './middleware/errorHandler.mjs';
+import logger from './logger.mjs';
 
 import dotenv from 'dotenv';
 dotenv.config();
 
-console.log(process.env.JWT_SECRET);
-console.log(process.env.NODE_ENV);
-console.log(process.env.PORT);
-console.log(process.env.MONGODB_URI);
+logger.info(process.env.JWT_SECRET);
+logger.info(process.env.NODE_ENV);
+logger.info(process.env.PORT);
+logger.info(process.env.MONGODB_URI);
 
 async function startServer() {
-  console.log('try to connect connectToMongoDB()');
+  logger.info('try to connect connectToMongoDB()');
   await connectToMongoDB();
-  console.log('after connectToMongoDB()');
+  logger.info('after connectToMongoDB()');
 
   const app = express();
   {
-    console.log('add express middleware');
+    logger.info('add express middleware');
     // JSON 요청 본문과 URL-encoded 데이터를 파싱할 수 있게 해주는 미들웨어
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
@@ -40,14 +41,14 @@ async function startServer() {
 
     // 오류 처리 미들웨어를 추가
     app.use((err, req, res, next) => {
-      console.error(err.stack);
+      logger.error(err.stack, { error: 'details' });
       res.status(500).send('Something broke!');
     });
   }
 
   const port = process.env.PORT;
   app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    logger.info(`Server is running on port ${port}`);
   });
 }
 
@@ -56,6 +57,6 @@ startServer().catch(console.error);
 // Graceful shutdown
 process.on('SIGINT', async () => {
   await mongoose.connection.close();
-  console.log('MongoDB connection closed.');
+  logger.info('MongoDB connection closed.');
   process.exit(0);
 });

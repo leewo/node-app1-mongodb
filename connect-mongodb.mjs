@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import logger from './logger.mjs';
 
 async function connectToMongoDB() {
   try {
@@ -8,9 +9,9 @@ async function connectToMongoDB() {
     };
 
     await mongoose.connect(uri, clientOptions);
-    console.log("Successfully connected to MongoDB!");
+    logger.info("Successfully connected to MongoDB!");
   } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
+    logger.error("Error connecting to MongoDB:", { error: 'details' });
     process.exit(1);
   }
 }
