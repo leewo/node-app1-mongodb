@@ -2,6 +2,7 @@ import User from '../models/user.mjs';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import logger from '../logger.mjs';
+import { AppError } from '../utils/errors.mjs';
 
 export const register = async (req, res) => {
   try {
@@ -27,14 +28,16 @@ export const login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      logger.error('Invalid email', { email: req.body.email });
-      return res.status(400).json({ message: 'Invalid email or password' });
+      throw new AppError('User not found', 404);
+      // logger.error('Invalid email', { email: req.body.email });
+      // return res.status(400).json({ message: 'Invalid email or password' });
     }
 
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) {
-      logger.error('Invalid password', { email: req.body.email });
-      return res.status(400).json({ message: 'Invalid email or password' });
+      throw new AppError('User not found', 404);
+      // logger.error('Invalid password', { email: req.body.email });
+      // return res.status(400).json({ message: 'Invalid email or password' });
     }
 
     const token = jwt.sign(
