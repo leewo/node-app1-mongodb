@@ -5,7 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import routes from './routes/routes.mjs';
 
-async function mongodb() {
+async function connectToMongoDB() {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
 
@@ -46,9 +46,9 @@ async function mongodb() {
   await connectToMongoDB();
 };
 
-console.log('try to connect mongodb()');
-await mongodb();
-console.log('after mongodb()');
+console.log('try to connect connectToMongoDB()');
+await connectToMongoDB();
+console.log('after connectToMongoDB()');
 
 const app = express();
 {
