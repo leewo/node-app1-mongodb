@@ -10,7 +10,6 @@ const router = Router();          // import한 Router 함수를 호출하여 새
 router.post('/register', async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    console.log(req.body, hashedPassword);
 
     const user = new User({
       name: req.body.name,
@@ -21,6 +20,7 @@ router.post('/register', async (req, res) => {
     await user.save();
     res.status(201).json({ message: 'User registered successfully', userId: user._id });
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(400).json({ message: 'Error registering user', error: error.message });
   }
 });
@@ -37,15 +37,22 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    const token = jwt.sign( // jwt.sign() 메서드를 사용하여 토큰을 생성
-      { _id: user._id },    // 첫 번째 인수: 토큰에 포함될 데이터
-      'secret',             // 두 번째 인수: 토큰을 서명하기 위한 비밀 키
-      { expiresIn: '1h' }   // 세 번째 인수: 토큰의 만료 시간. '1h'은 토큰이 1시간 후에 만료되도록 설정
+    const token = jwt.sign(
+      { _id: user._id },
+      process.env.JWT_SECRET,   // JWT_SECRET 환경 변수를 사용하여 비밀 키를 가져옴. dotenv를 사용하여 환경 변수를 로드. JWT_SECRET을 .env 파일에 설정해야 한다
+      { expiresIn: '1h' }
     );
-    res.header('auth-token', token);  // 헤더에 토큰을 추가
-    res.header('access-control-expose-headers', 'auth-token'); // 클라이언트가 헤더에 접근할 수 있도록 헤더를 노출
+
+    // HttpOnly 쿠키로 토큰 설정
+    res.cookie('auth-token', token, {
+      httpOnly: true,                                 // 토큰을 HttpOnly 쿠키로 설정. 이는 클라이언트 측 JavaScript에서 쿠키에 접근할 수 없게 하여 XSS 공격으로부터 보호한다
+      secure: process.env.NODE_ENV === 'production',  // 프로덕션 환경에서는 secure 옵션을 true로 설정하여 HTTPS에서만 쿠키가 전송되도록 한다
+      sameSite: 'strict'                              // sameSite 옵션을 'strict'로 설정하여 쿠키가 동일 출처에서만 전송되도록 한다. CSRF 공격을 방지하기 위한 것
+    });
+
     res.status(200).json({ message: 'User logged in successfully' });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(400).json({ message: 'Error logging in', error: error.message });
   }
 });
