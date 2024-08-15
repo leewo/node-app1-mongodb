@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import routes from './routes/routes.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,9 +46,7 @@ async function connectToMongoDB() {
 
 connectToMongoDB();
 
-app.get('/', (req, res) => {
-  res.send('Hello, World! ES Modules are working!');
-});
+app.use('/api', routes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
