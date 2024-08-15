@@ -3,6 +3,23 @@ import mongoose from 'mongoose';
 import routes from './routes/routes.mjs';
 import connectToMongoDB from './connect-mongodb.mjs';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
+console.log(process.env.JWT_SECRET);
+console.log(process.env.NODE_ENV);
+console.log(process.env.PORT);
+console.log(process.env.MONGODB_URI);
+// console.log(process.env.MONGODB_URI_TEST);
+// console.log(process.env.MONGODB_URI_PROD);
+// console.log(process.env.MONGODB_URI_DEV);
+// console.log(process.env.MONGODB_URI_LOCAL);
+// console.log(process.env.MONGODB_URI_LOCAL_TEST);
+// console.log(process.env.MONGODB_URI_LOCAL_PROD);
+// console.log(process.env.MONGODB_URI_LOCAL_DEV);
+// console.log(process.env.MONGODB_URI_LOCAL_TEST_DEV);
+// console.log(process.env.MONGODB_URI_LOCAL_PROD_DEV);
+// console.log(process.env.MONGODB_URI_LOCAL_PROD_TEST);
 
 async function startServer() {
   console.log('try to connect connectToMongoDB()');
@@ -25,7 +42,7 @@ async function startServer() {
     });
   }
 
-  const port = 3000;
+  const port = process.env.PORT;
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
