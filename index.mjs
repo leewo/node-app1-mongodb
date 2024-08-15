@@ -15,6 +15,22 @@ dotenvSafe.config({
   example: '.env.example',
 });
 
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Sample API with Swagger',
+      version: '1.0.0',
+    },
+  },
+  apis: ['./routes/*.mjs'], // API 라우트 파일 경로
+};
+
+const specs = swaggerJsdoc(options);
+
 logger.info(process.env.JWT_SECRET);
 logger.info(process.env.NODE_ENV);
 logger.info(process.env.PORT);
@@ -44,6 +60,13 @@ async function startServer() {
     app.use(errorHandler);
 
     app.use('/api/v1', v1Routes);
+
+    // Swagger 미들웨어를 추가. /api-docs 경로로 API 문서를 확인할 수 있다
+    // Swagger UI를 사용하여 API 문서를 시각적으로 확인할 수 있다
+    // Swagger UI는 /api-docs 경로에 대한 GET 요청을 처리한다. 이 요청에 대한 응답으로 Swagger UI를 제공한다
+    // Swagger UI는 Swagger 스펙을 사용하여 API 문서를 렌더링한다
+    // Swagger 스펙은 OpenAPI 스펙을 사용하여 작성된 JSON 또는 YAML 파일이다
+    app.use('/api-docs/v1', swaggerUi.serve, swaggerUi.setup(specs));
 
     // 오류 처리 미들웨어를 추가
     app.use((err, req, res, next) => {
