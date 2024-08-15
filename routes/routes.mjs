@@ -47,7 +47,8 @@ router.post('/login', async (req, res) => {
     res.cookie('auth-token', token, {
       httpOnly: true,                                 // 토큰을 HttpOnly 쿠키로 설정. 이는 클라이언트 측 JavaScript에서 쿠키에 접근할 수 없게 하여 XSS 공격으로부터 보호한다
       secure: process.env.NODE_ENV === 'production',  // 프로덕션 환경에서는 secure 옵션을 true로 설정하여 HTTPS에서만 쿠키가 전송되도록 한다
-      sameSite: 'strict'                              // sameSite 옵션을 'strict'로 설정하여 쿠키가 동일 출처에서만 전송되도록 한다. CSRF 공격을 방지하기 위한 것
+      sameSite: 'strict',                             // sameSite 옵션을 'strict'로 설정하여 쿠키가 동일 출처에서만 전송되도록 한다. CSRF 공격을 방지하기 위한 것
+      maxAge: 24 * 60 * 60 * 1000                     // maxAge 옵션을 사용하여 쿠키의 만료 시간을 설정. 이 경우 24시간
     });
 
     res.status(200).json({ message: 'User logged in successfully' });
