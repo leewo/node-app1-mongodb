@@ -9,6 +9,12 @@ import logger from './logger.mjs';
 import dotenv from 'dotenv';
 dotenv.config();
 
+import dotenvSafe from 'dotenv-safe';
+dotenvSafe.config({
+  allowEmptyValues: true,
+  example: '.env.example',
+});
+
 logger.info(process.env.JWT_SECRET);
 logger.info(process.env.NODE_ENV);
 logger.info(process.env.PORT);
