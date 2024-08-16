@@ -12,7 +12,7 @@ const options = {
     info: {
       title: 'User Management API',
       version: '1.0.0',
-      description: 'API documentation for your Node.js application',
+      description: 'API for user registration, authentication, and management',
     },
     servers: [
       {
@@ -20,8 +20,17 @@ const options = {
         description: 'User Management API',
       },
     ],
+    components: {
+      securitySchemes: {
+        cookieAuth: {
+          type: 'apiKey',
+          in: 'cookie',
+          name: 'auth-token'
+        }
+      }
+    }
   },
-  apis: [path.join(__dirname, './routes/*.mjs')], // 모든 라우트 파일을 포함
+  apis: [path.join(__dirname, './routes/**/*.mjs')], // 모든 라우트 파일을 포함
 };
 
 const swaggerSpec = swaggerJSDoc(options);
