@@ -1,0 +1,18 @@
+# swagger.yaml
+openapi: 3.0.0
+info:
+  title: Your API Name
+  version: 1.0.0
+  description: Description of your API
+servers:
+  - url: https://api.yourserver.com/v1
+paths:
+  /register:
+    post:
+      summary: Register a new user
+      # ... (rest of your API specification)
+  /login:
+    post:
+      summary: Log in a user
+      # ... (rest of your API specification)
+# ... (other endpoints)
