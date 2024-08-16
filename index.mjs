@@ -87,10 +87,7 @@ async function startServer() {
                 name: 'auth-token'
               }
             }
-          },
-          security: [{
-            cookieAuth: []
-          }]
+          }
         },
         apis: [path.join(__dirname, './routes/v1/*.mjs')],
       };
