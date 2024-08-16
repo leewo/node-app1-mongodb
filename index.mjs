@@ -20,6 +20,9 @@ dotenvSafe.config({
 // swagger-jsdoc와 swagger-ui-express 패키지를 import
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './swaggerConfig.js';
+import fs from 'fs';
+import yaml from 'js-yaml';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -93,9 +96,33 @@ async function startServer() {
       };
 
       const specs = swaggerJsdoc(options);
-      console.log('Swagger specs:', JSON.stringify(specs, null, 2));
+      // console.log('Swagger specs:', JSON.stringify(specs, null, 2));
 
       app.use('/api-docs/v1', swaggerUi.serve, swaggerUi.setup(specs));
+
+      // /docs 디렉토리가 없으면 생성
+      const docsDir = path.join(__dirname, 'docs');
+      if (!fs.existsSync(docsDir)) {
+        fs.mkdirSync(docsDir);
+      }
+
+      // Swagger YAML 파일 생성
+      const swaggerYaml = yaml.dump(swaggerSpec);
+      fs.writeFileSync(path.join(docsDir, 'swagger.yaml'), swaggerYaml, 'utf8');
+
+      // Swagger JSON 파일 생성
+      const swaggerJson = JSON.stringify(swaggerSpec, null, 2);
+      fs.writeFileSync(path.join(docsDir, 'swagger.json'), swaggerJson, 'utf8');
+
+      // Swagger YAML 파일 서빙
+      app.get('/docs/swagger.yaml', (req, res) => {
+        res.sendFile(path.join(__dirname, 'docs', 'swagger.yaml'));
+      });
+
+      // Swagger JSON 파일 서빙
+      app.get('/docs/swagger.json', (req, res) => {
+        res.sendFile(path.join(__dirname, 'docs', 'swagger.json'));
+      });
     }
   }
 

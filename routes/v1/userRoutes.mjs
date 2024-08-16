@@ -265,7 +265,7 @@ router.post('/change-password', authenticateToken, changePassword);
 /**
  * @swagger
  * /api/v1/update-info:
- *   put:
+ *   post:
  *     summary: Update user information
  *     tags: [Users]
  *     security:
