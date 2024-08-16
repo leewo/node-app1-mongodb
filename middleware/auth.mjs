@@ -5,7 +5,7 @@ import { AppError } from '../utils/errors.mjs';
 export const authenticateToken = (req, res, next) => {
   const token = req.cookies['auth-token'];
   if (!token) {
-    throw new AppError('Unauthorized 1', 401);
+    return next(new AppError('Unauthorized - No token provided', 401));
   }
 
   try {
@@ -13,6 +13,7 @@ export const authenticateToken = (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    throw new AppError('Unauthorized 2', 401);
+    // JWT 검증 에러는 handleJWTError 미들웨어에서 처리됩니다.
+    next(error);
   }
 };

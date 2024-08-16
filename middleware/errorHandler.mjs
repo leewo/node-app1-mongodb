@@ -1,11 +1,14 @@
+// middleware/errorHandler.mjs
 import logger from '../logger.mjs';
-
-// 사용 예:
-// throw new AppError('User not found', 404);
+import { AppError } from '../utils/errors.mjs';
 
 export const errorHandler = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
+
+  if (err instanceof AppError) {
+    err.isOperational = true;
+  }
 
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
@@ -37,4 +40,15 @@ const sendErrorProd = (err, res) => {
       message: 'Something went very wrong!'
     });
   }
+};
+
+// JWT 인증 관련 에러 처리를 위한 미들웨어
+export const handleJWTError = (err, req, res, next) => {
+  if (err.name === 'JsonWebTokenError') {
+    return next(new AppError('Invalid token. Please log in again!', 401));
+  }
+  if (err.name === 'TokenExpiredError') {
+    return next(new AppError('Your token has expired! Please log in again.', 401));
+  }
+  next(err);
 };

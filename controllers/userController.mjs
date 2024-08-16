@@ -69,21 +69,15 @@ export const logout = (req, res) => {
   res.status(200).json({ message: 'User logged out successfully' });
 }
 
-export const getUser = async (req, res) => {
+export const getUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
-      throw new AppError('User not found', 404);
+      return next(new AppError('User not found', 404));
     }
     const { password, ...userWithoutPassword } = user.toObject();
     res.status(200).json({ message: 'User retrieved successfully', user: userWithoutPassword });
   } catch (error) {
-    if (error instanceof AppError) {
-      logger.error('1. Error getting user:', { error: error.message });
-      res.status(error.statusCode).json({ message: error.message });
-    } else {
-      logger.error('2. Error getting user:', { error: error.message });
-      res.status(500).json({ message: 'Internal server error' });
-    }
+    next(new AppError('Error getting user', 500));
   }
 };

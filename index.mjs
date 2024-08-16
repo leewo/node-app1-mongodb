@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import v1Routes from './routes/v1/index.mjs';
 import connectToMongoDB from './connect-mongodb.mjs';
 import cors from 'cors';
-import { errorHandler } from './middleware/errorHandler.mjs';
+import { errorHandler, handleJWTError } from './middleware/errorHandler.mjs';
 import logger from './logger.mjs';
 import cookieParser from 'cookie-parser';
 
@@ -50,6 +50,9 @@ async function startServer() {
       optionsSuccessStatus: 200                     // CORS 요청에 대한 응답 상태 코드를 200으로 설정
     };
     app.use(cors(corsOptions));
+
+    // JWT 에러 처리
+    app.use(handleJWTError);
 
     // 오류 처리 미들웨어를 추가
     app.use(errorHandler);
