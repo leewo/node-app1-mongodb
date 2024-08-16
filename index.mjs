@@ -94,18 +94,12 @@ async function startServer() {
         },
         apis: [path.join(__dirname, './routes/v1/*.mjs')],
       };
-      
+
       const specs = swaggerJsdoc(options);
       console.log('Swagger specs:', JSON.stringify(specs, null, 2));
 
       app.use('/api-docs/v1', swaggerUi.serve, swaggerUi.setup(specs));
     }
-
-    // 오류 처리 미들웨어를 추가
-    app.use((err, req, res, next) => {
-      logger.error(err.stack, { error: 'details' });
-      res.status(500).send('Something broke!');
-    });
   }
 
   const port = process.env.PORT;
