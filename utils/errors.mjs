@@ -1,3 +1,5 @@
+// utils/errors.mjs
+
 export class AppError extends Error {
   constructor(message, statusCode) {
     super(message);

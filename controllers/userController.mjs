@@ -1,3 +1,5 @@
+// controllers/userController.mjs
+
 import User from '../models/user.mjs';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -28,14 +30,14 @@ export const login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      throw new AppError('User not found', 404);
+      throw new AppError('Invalid email or password', 401);
       // logger.error('Invalid email', { email: req.body.email });
       // return res.status(400).json({ message: 'Invalid email or password' });
     }
 
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) {
-      throw new AppError('User not found', 404);
+      throw new AppError('Invalid email or password', 401);
       // logger.error('Invalid password', { email: req.body.email });
       // return res.status(400).json({ message: 'Invalid email or password' });
     }

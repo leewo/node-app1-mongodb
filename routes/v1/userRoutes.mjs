@@ -1,3 +1,4 @@
+// routes/v1/userRoutes.mjs
 import { register, login, logout, getUser } from '../../controllers/userController.mjs';
 import { authenticateToken } from '../../middleware/auth.mjs';
 import { registerValidator, validate } from '../../middleware/validators.mjs';

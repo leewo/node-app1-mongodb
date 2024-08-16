@@ -1,3 +1,4 @@
+// routes/v1/otherRoutes.mjs
 import { Router } from 'express'; // ES 모듈 문법을 사용하여 express 패키지에서 Router를 직접 import
 import logger from '../../logger.mjs';
 

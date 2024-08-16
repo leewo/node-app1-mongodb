@@ -1,3 +1,4 @@
+// middleware/validators.mjs
 import { body, validationResult } from 'express-validator';
 
 const passwordValidator = body('password')

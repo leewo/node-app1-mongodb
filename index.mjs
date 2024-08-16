@@ -1,3 +1,4 @@
+// index.mjs
 import express from 'express';
 import mongoose from 'mongoose';
 import v1Routes from './routes/v1/index.mjs';
