@@ -83,3 +83,31 @@ export const getUser = async (req, res, next) => {
     next(new AppError('Error getting user', 500));
   }
 };
+
+export const changePassword = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const validPassword = await bcrypt.compare(req.body.currentPassword, user.password);
+    if (!validPassword) {
+      throw new AppError('Current password is incorrect', 400);
+    }
+    const hashedNewPassword = await bcrypt.hash(req.body.newPassword, 10);
+    user.password = hashedNewPassword;
+    await user.save();
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (error) {
+    next(new AppError('Error changing password', 500));
+  }
+};
+
+export const updateUserInfo = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (req.body.name) user.name = req.body.name;
+    if (req.body.email) user.email = req.body.email;
+    await user.save();
+    res.status(200).json({ message: 'User information updated successfully' });
+  } catch (error) {
+    next(new AppError('Error updating user information', 500));
+  }
+};
