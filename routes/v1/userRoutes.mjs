@@ -1,4 +1,4 @@
-import { register, login } from '../../controllers/userController.mjs';
+import { register, login, logout, getUser } from '../../controllers/userController.mjs';
 import { registerValidator, validate } from '../../middleware/validators.mjs';
 import { Router } from 'express'; // ES 모듈 문법을 사용하여 express 패키지에서 Router를 직접 import
                                   // 중괄호 { } 를 사용하는 것은 named import를 의미하며, express 모듈에서 Router라는 이름의 export를 가져온다
@@ -113,5 +113,9 @@ router.post('/register', registerValidator, validate, register);
  *                   example: Invalid email or password
  */
 router.post('/login', login);
+
+router.post('/logout', logout);
+
+router.get('/user', getUser);
 
 export default router;

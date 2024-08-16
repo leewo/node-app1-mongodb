@@ -64,3 +64,25 @@ export const login = async (req, res) => {
   }
 };
 
+export const logout = (req, res) => {
+  res.clearCookie('auth-token');
+  res.status(200).json({ message: 'User logged out successfully' });
+}
+
+export const getUser = async (req, res) => {
+  try {
+    const cookie = req.cookies['auth-token'];
+    const claims = jwt.decode(cookie, process.env.JWT_SECRET);
+    if (!claims) {
+      logger.error('Unauthorized');
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const user = await User.findById(claims._id);
+    const { password, ...userWithoutPassword } = user.toObject();
+    res.status(200).json({ message: 'User retrieved successfully', user: userWithoutPassword });
+  } catch (error) {
+    logger.error('Error getting user:', { error: error.message });
+    res.status(400).json({ message: 'Error getting user', error: error.message });
+  }
+}

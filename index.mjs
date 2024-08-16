@@ -5,6 +5,7 @@ import connectToMongoDB from './connect-mongodb.mjs';
 import cors from 'cors';
 import { errorHandler } from './middleware/errorHandler.mjs';
 import logger from './logger.mjs';
+import cookieParser from 'cookie-parser';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -38,6 +39,9 @@ async function startServer() {
     // JSON 요청 본문과 URL-encoded 데이터를 파싱할 수 있게 해주는 미들웨어
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+
+    // 쿠키 파서 미들웨어를 추가
+    app.use(cookieParser());
 
     // CORS 미들웨어를 추가
     const corsOptions = {
