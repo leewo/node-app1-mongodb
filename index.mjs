@@ -74,10 +74,23 @@ async function startServer() {
             title: 'Sample API with Swagger',
             version: '1.0.0',
           },
+          // Swagger 설정에 쿠키 인증을 추가해야 한다
+          components: {
+            securitySchemes: {
+              cookieAuth: {
+                type: 'apiKey',
+                in: 'cookie',
+                name: 'auth-token'
+              }
+            }
+          },
+          security: [{
+            cookieAuth: []
+          }]
         },
-        apis: [path.join(__dirname, './routes/v1/*.mjs')], // API 스펙이 작성된 파일의 경로를 지정
+        apis: [path.join(__dirname, './routes/v1/*.mjs')],
       };
-
+      
       const specs = swaggerJsdoc(options);
       console.log('Swagger specs:', JSON.stringify(specs, null, 2));
 

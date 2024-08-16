@@ -71,18 +71,19 @@ export const logout = (req, res) => {
 
 export const getUser = async (req, res) => {
   try {
-    const cookie = req.cookies['auth-token'];
-    const claims = jwt.decode(cookie, process.env.JWT_SECRET);
-    if (!claims) {
-      logger.error('Unauthorized');
-      return res.status(401).json({ message: 'Unauthorized' });
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      throw new AppError('User not found', 404);
     }
-
-    const user = await User.findById(claims._id);
     const { password, ...userWithoutPassword } = user.toObject();
     res.status(200).json({ message: 'User retrieved successfully', user: userWithoutPassword });
   } catch (error) {
-    logger.error('Error getting user:', { error: error.message });
-    res.status(400).json({ message: 'Error getting user', error: error.message });
+    if (error instanceof AppError) {
+      logger.error('1. Error getting user:', { error: error.message });
+      res.status(error.statusCode).json({ message: error.message });
+    } else {
+      logger.error('2. Error getting user:', { error: error.message });
+      res.status(500).json({ message: 'Internal server error' });
+    }
   }
-}
+};

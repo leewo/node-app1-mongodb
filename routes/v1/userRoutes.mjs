@@ -1,7 +1,8 @@
 import { register, login, logout, getUser } from '../../controllers/userController.mjs';
+import { authenticateToken } from '../../middleware/auth.mjs';
 import { registerValidator, validate } from '../../middleware/validators.mjs';
 import { Router } from 'express'; // ES 모듈 문법을 사용하여 express 패키지에서 Router를 직접 import
-                                  // 중괄호 { } 를 사용하는 것은 named import를 의미하며, express 모듈에서 Router라는 이름의 export를 가져온다
+// 중괄호 { } 를 사용하는 것은 named import를 의미하며, express 모듈에서 Router라는 이름의 export를 가져온다
 const router = Router();          // import한 Router 함수를 호출하여 새로운 router 인스턴스를 생성. 이 부분은 CommonJS 문법과 동일
 
 /**
@@ -114,8 +115,90 @@ router.post('/register', registerValidator, validate, register);
  */
 router.post('/login', login);
 
+/**
+ * @swagger
+ * /api/v1/logout:
+ *   post:
+ *     summary: Log out a user
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: User logged out successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User logged out successfully
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error logging out
+ */
 router.post('/logout', logout);
 
-router.get('/user', getUser);
+/**
+ * @swagger
+ * /api/v1/user:
+ *   get:
+ *     summary: Get user information
+ *     tags: [Users]
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: User information retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User retrieved successfully
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 60d5ecb74e4d7b2d1c5e7b2a
+ *                     name:
+ *                       type: string
+ *                       example: John Doe
+ *                     email:
+ *                       type: string
+ *                       example: john@example.com
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error getting user
+ *                 error:
+ *                   type: string
+ */
+router.get('/user', authenticateToken, getUser);
 
 export default router;
