@@ -103,11 +103,22 @@ export const changePassword = async (req, res, next) => {
 export const updateUserInfo = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
+    if (!user) {
+      return next(new AppError('User not found', 404));
+    }
+    
+    const oldUserInfo = { name: user.name, email: user.email };
+    
     if (req.body.name) user.name = req.body.name;
     if (req.body.email) user.email = req.body.email;
+    
     await user.save();
+    
+    logger.info(`User info updated. Old: ${JSON.stringify(oldUserInfo)}, New: ${JSON.stringify({ name: user.name, email: user.email })}`);
+    
     res.status(200).json({ message: 'User information updated successfully' });
   } catch (error) {
+    logger.error(`Error updating user information: ${error.message}`);
     next(new AppError('Error updating user information', 500));
   }
 };

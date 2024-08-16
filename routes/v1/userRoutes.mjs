@@ -316,6 +316,6 @@ router.post('/change-password', authenticateToken, changePassword);
  *                   type: string
  *                   example: Error updating user information
  */
-router.put('/update-info', authenticateToken, updateUserInfo);
+router.post('/update-info', authenticateToken, updateUserInfo);
 
 export default router;
