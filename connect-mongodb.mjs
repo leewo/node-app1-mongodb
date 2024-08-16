@@ -11,7 +11,7 @@ async function connectToMongoDB() {
     await mongoose.connect(uri, clientOptions);
     logger.info("Successfully connected to MongoDB!");
   } catch (error) {
-    logger.error("Error connecting to MongoDB:", { error: 'details' });
+    logger.error("Error connecting to MongoDB:", { error: error.message });
     process.exit(1);
   }
 }
